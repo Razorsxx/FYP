@@ -209,15 +209,15 @@ namespace StarterAssets
             //Use raycast to check the tags of the object hit to see if it is interactable
             RaycastHit hit;
             Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
-            //active = Physics.Raycast(cam.position, cam.forward, out hit, activateDistance);#
+            //active = Physics.Raycast(cam.position, cam.forward, out hit, activateDistance);
             active = Physics.Raycast(ray, out hit, activateDistance);
 
             if (Input.GetKey(KeyCode.F) && active == true)
             {               
-                if (hit.collider.tag == "Interactive Object")
+                if (hit.collider.tag == "Interactive Object")   //checks if the raycast hits an object with the tag Interactive Object
                 {
-                    var name = hit.collider.gameObject.name;
-
+                    var name = hit.collider.gameObject.name;    //stores the name of the object hit
+                    //Switch case checks the name of the object and add it to a string list which is then used in the ChessBoard script to spawn it on the board
                     switch (name)
                     {
                         case ("Chess Knight"):
@@ -259,17 +259,18 @@ namespace StarterAssets
                 {
                     if(Input.GetMouseButtonDown(0) | Input.GetKeyDown(KeyCode.F))
                     {
-                        for (int i = 0; i < gameManager.pieces.Count; i++)
+                        for (int i = 0; i < gameManager.pieces.Count; i++)  //goes through the list of pieces and tells us the position
                         {
                             if (gameManager.pieces[i] == hit.transform)
                             {
-                                if (SwapIsValid(i, -gameManager.size, gameManager.size) && !gameManager.Complete())
+                                //Checks all the directions to see if there is a valid move
+                                if (SwapIsValid(i, -gameManager.size, gameManager.size) && !gameManager.Complete()) //UP
                                     break;
-                                if (SwapIsValid(i, +gameManager.size, gameManager.size) && !gameManager.Complete())
+                                if (SwapIsValid(i, +gameManager.size, gameManager.size) && !gameManager.Complete()) //DOWN
                                     break;
-                                if (SwapIsValid(i, -1, 0) && !gameManager.Complete() && !gameManager.Complete())
+                                if (SwapIsValid(i, -1, 0) && !gameManager.Complete() && !gameManager.Complete())    //LEFT
                                     break;
-                                if (SwapIsValid(i, +1, gameManager.size - 1) && !gameManager.Complete())
+                                if (SwapIsValid(i, +1, gameManager.size - 1) && !gameManager.Complete())    //RIGHT
                                     break;
                             }
                         }
@@ -282,9 +283,9 @@ namespace StarterAssets
         {
             if(((i % gameManager.size) != colCheck) && ((i + offset) == gameManager.emptyLoc))
             {
-                (gameManager.pieces[i], gameManager.pieces[i + offset]) = (gameManager.pieces[i + offset], gameManager.pieces[i]);
-                (gameManager.pieces[i].localPosition, gameManager.pieces[i + offset].localPosition) = (gameManager.pieces[i + offset].localPosition, gameManager.pieces[i].localPosition);
-                gameManager.emptyLoc = i;
+                (gameManager.pieces[i], gameManager.pieces[i + offset]) = (gameManager.pieces[i + offset], gameManager.pieces[i]);  //Swap their saved Locations
+                (gameManager.pieces[i].localPosition, gameManager.pieces[i + offset].localPosition) = (gameManager.pieces[i + offset].localPosition, gameManager.pieces[i].localPosition);  //Swap The Pieces Transforms
+                gameManager.emptyLoc = i;   //Update the empty location
                 return true;
             }
             return false;

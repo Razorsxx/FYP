@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 using System.Linq;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
@@ -22,6 +23,8 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private GameObject chessPiecePrefab;
 
+    private TextMeshPro textObject;
+
     private MazePiece[,] mazeGrid;
     public List<Direction> directions = new List<Direction>();
 
@@ -29,11 +32,14 @@ public class GameManager : MonoBehaviour
     public List<Transform> pieces;
     public int emptyLoc;
     public int size;
+    private int missingPieces;
 
     private bool Stop = false;
 
     void Start()
     {
+        textObject = GameObject.Find("Text2").GetComponent<TextMeshPro>();
+
         directions = new List<Direction> { Direction.Right, Direction.Left, Direction.Down, Direction.Up };
 
         mazeGrid = new MazePiece[mazeWidth, mazeDepth];
@@ -62,7 +68,8 @@ public class GameManager : MonoBehaviour
         if (Complete() && Stop == false)
         {
             chessPiecePrefab.gameObject.SetActive(true);
-            Debug.Log("You Win");
+            textObject.text = "Well Done.\nThe Chess Piece Is Located Behind You";
+            //Debug.Log("You Win");
             Stop = true;
         }
     }
@@ -74,12 +81,12 @@ public class GameManager : MonoBehaviour
         {
             for (int col = 0; col < size; col++)
             {
-                Transform piece = Instantiate(piecePrefab, gameTransform);
+                Transform piece = Instantiate(piecePrefab, gameTransform);  //instatiate every piece
                 pieces.Add(piece);
-                piece.localPosition = new Vector3(-1 + (2 * width * col) + width, +1 - (2 * width * row) - width, 0);
-                piece.localScale = ((2 * width) - gapThickness) * Vector3.one;
-                piece.name = $"{(row * size) + col}";
-
+                piece.localPosition = new Vector3(-1 + (2 * width * col) + width, +1 - (2 * width * row) - width, 0);   //Positions the in a game board starting from the top left
+                piece.localScale = ((2 * width) - gapThickness) * Vector3.one;  //scales the pieces adding a small gap between them
+                piece.name = $"{(row * size) + col}";   //give them a name that will later be used to check if the puzzle is complete
+                //Make the Bottom Right the empty location and store the location in a variable
                 if ((row == size - 1) && (col == size - 1))
                 {
                     emptyLoc = (size * size) - 1;
@@ -102,12 +109,12 @@ public class GameManager : MonoBehaviour
     }
     public bool Complete()
     {
-        bool complet = true;
+        /*bool complet = true;
         if (complet)
         {
             return true;
-        }
-        for (int i = 0; i < pieces.Count; i++)
+        }*/
+        for (int i = 0; i < pieces.Count; i++)  //iterates through list and checks if they are in the correct position
         {
             if (pieces[i].name != $"{i}")
             {
@@ -123,9 +130,10 @@ public class GameManager : MonoBehaviour
 
         while (count < (size * size * size * size))
         {
-            int rnd = Random.Range(0, size * size);
+            int rnd = Random.Range(0, size * size); //get a random location
             if (rnd == last) { continue; }
             last = emptyLoc;
+            //Checks the surrouding location to see if it can move there
             if (controller.SwapIsValid(rnd, -size, size))
             {
                 count++;
